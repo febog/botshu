@@ -10,6 +10,7 @@ const textAnalyticsClient = new TextAnalyticsClient(endpoint, new AzureKeyCreden
 
 const production = process.env.PRODUCTION_MONKAW === 'production';
 var botEnabled = false;
+var userStrikes = {};
 
 const client = new tmi.Client({
     connection: {
@@ -35,17 +36,19 @@ client.on('message', async (channel, user, message, self) => {
     let isModOrBroadcaster = user.mod || user.badges?.broadcaster === '1';
     if (!botEnabled && isModOrBroadcaster && (message === '!botshu on')) {
         botEnabled = true;
+        userStrikes = new Map();
         client.say(channel, `BotShu is now enabled mushHii`);
     } else if (isModOrBroadcaster && (message === '!botshu off')) {
         botEnabled = false;
+        userStrikes = {};
         client.say(channel, `BotShu is now disabled PETTHEMODS`);
     }
     if (!botEnabled) return;
 
     // Language processing logic
 
-    // If it this is production and the message is from a sub, ignore
-    if (production && user.subscriber) return;
+    // If this is production and the message is from a sub, mod or broadcaster, ignore
+    if (production && (user.subscriber || isModOrBroadcaster)) return;
 
     // Get language information from the message contents using Azure text analytics
     let languageResult = await languageDetection(message);
@@ -57,7 +60,18 @@ client.on('message', async (channel, user, message, self) => {
 
     // If sure it's not English
     if (languageResult.name !== 'English' && languageResult.confidenceScore === 1) {
-        client.say(channel, `[WARNING] @${user.username} Keep the chat in English. Thank you. !whyeng`);
+        if (!userStrikes.has(user.username)) {
+            // No strikes, first warning
+            userStrikes.set(user.username, 1); // First strike
+            client.say(channel, `[WARNING] @${user.username} Keep the chat in English. Why? - !whyeng`);
+        } else if (userStrikes.get(user.username) === 1) {
+            // Second strike, last warning
+            userStrikes.set(user.username, 2); // Second strike
+            client.say(channel, `[LAST WARNING] @${user.username} ENGLISH ONLY PLEASE. Why? - !whyeng`);
+        } else if (userStrikes.get(user.username) >= 2) {
+            // This is the third or more time, timeout
+            client.timeout(channel, user.username, 600, "Chat not in English");
+        }
     }
 });
 
