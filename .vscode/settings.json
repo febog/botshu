@@ -1,0 +1,8 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/48935128-bc87-4c34-ae1d-1d429a233ec4/resourceGroups/BotShu/providers/Microsoft.Web/sites/botshu-app-service",
+    "appService.deploySubpath": "."
+}
