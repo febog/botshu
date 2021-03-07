@@ -8,7 +8,7 @@ const key = process.env.TEXT_ANALYTICS_KEY;
 const endpoint = 'https://botshu-language-detection.cognitiveservices.azure.com/';
 const textAnalyticsClient = new TextAnalyticsClient(endpoint, new AzureKeyCredential(key));
 
-const debugging = true;
+const production = process.env.PRODUCTION_MONKAW === 'production';
 
 const client = new tmi.Client({
     connection: {
@@ -33,7 +33,7 @@ client.on('message', async (channel, tags, message, self) => {
     let languageResult = await languageDetection(message);
 
     // If debugging print detected language and confidence
-    if (debugging) {
+    if (!production) {
         console.log(`${tags['display-name']}: ${message} (${languageResult.name} (${languageResult.confidenceScore}) detected)`);
     }
 
