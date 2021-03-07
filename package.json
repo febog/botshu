@@ -1,0 +1,12 @@
+{
+  "name": "botshu",
+  "version": "1.0.0",
+  "description": "Twitch chat bot for Mushu",
+  "main": "index.js",
+  "scripts": {
+    "test": "",
+    "start": "node index.js"
+  },
+  "author": "Felipe Bojorquez",
+  "license": "MIT"
+}
