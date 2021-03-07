@@ -9,6 +9,7 @@ const endpoint = 'https://botshu-language-detection.cognitiveservices.azure.com/
 const textAnalyticsClient = new TextAnalyticsClient(endpoint, new AzureKeyCredential(key));
 
 const production = process.env.PRODUCTION_MONKAW === 'production';
+var botEnabled = false;
 
 const client = new tmi.Client({
     connection: {
@@ -28,6 +29,20 @@ client.connect();
 client.on('message', async (channel, user, message, self) => {
     // If the message comes from the bot itself, ignore.
     if (self) return;
+
+    // Enable/disable logic
+
+    let isModOrBroadcaster = user.mod || user.badges?.broadcaster === '1';
+    if (!botEnabled && isModOrBroadcaster && (message === '!botshu on')) {
+        botEnabled = true;
+        client.say(channel, `BotShu is now enabled mushHii`);
+    } else if (isModOrBroadcaster && (message === '!botshu off')) {
+        botEnabled = false;
+        client.say(channel, `BotShu is now disabled PETTHEMODS`);
+    }
+    if (!botEnabled) return;
+
+    // Language processing logic
 
     // If it this is production and the message is from a sub, ignore
     if (production && user.subscriber) return;
