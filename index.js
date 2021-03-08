@@ -8,6 +8,7 @@ const key = process.env.TEXT_ANALYTICS_KEY;
 const endpoint = 'https://botshu-language-detection.cognitiveservices.azure.com/';
 const textAnalyticsClient = new TextAnalyticsClient(endpoint, new AzureKeyCredential(key));
 
+// Add a server so that App Service can ping the app and get a response
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
