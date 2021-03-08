@@ -76,7 +76,7 @@ client.on('message', async (channel, user, message, self) => {
             client.say(channel, `@${firstArg} has ${strikeCount} strikes`);
         } else {
             // Username not found
-            client.say(channel, `Username "${firstArg}" not found`);
+            client.say(channel, `Username "${firstArg}" has no strikes`);
         }
     }
 
