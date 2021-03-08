@@ -49,7 +49,7 @@ client.on('message', async (channel, user, message, self) => {
 
     if (isModOrBroadcaster && (message === '!botshu reset all')) {
         userStrikes = new Map();
-        client.say(channel, `BotShu strikes have been reset`);
+        client.say(channel, `Strikes have been reset`);
     } else if (isModOrBroadcaster && message.startsWith('!botshu reset')) {
         // Remove "!botshu reset" from the message and get the words
         const args = message.slice(14).split(' ');
@@ -59,7 +59,7 @@ client.on('message', async (channel, user, message, self) => {
             // User found, reset their strikes
             if (userStrikes.delete(firstArg)) {
                 // The username existed and has been removed
-                client.say(channel, `BotShu strikes have been reset for ${firstArg}`);
+                client.say(channel, `Strikes have been reset for ${firstArg}`);
             }
         } else {
             // Username not found
