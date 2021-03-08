@@ -65,6 +65,19 @@ client.on('message', async (channel, user, message, self) => {
             // Username not found
             client.say(channel, `Username "${firstArg}" not found`);
         }
+    } else if (isModOrBroadcaster && message.startsWith('!botshu count')) {
+        // Remove "!botshu count" from the message and get the words
+        const args = message.slice(14).split(' ');
+        // Get the name if given after the word "count"
+        const firstArg = args.shift().toLowerCase();
+        if (userStrikes.has(firstArg)) {
+            // User found, print their strkes
+            let strikeCount = userStrikes.get(firstArg);
+            client.say(channel, `@${firstArg} has ${strikeCount} strikes`);
+        } else {
+            // Username not found
+            client.say(channel, `Username "${firstArg}" not found`);
+        }
     }
 
     // Language processing logic
