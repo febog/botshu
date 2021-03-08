@@ -45,6 +45,28 @@ client.on('message', async (channel, user, message, self) => {
     }
     if (!botEnabled) return;
 
+    // Configuration logic
+
+    if (isModOrBroadcaster && (message === '!botshu reset all')) {
+        userStrikes = new Map();
+        client.say(channel, `BotShu strikes have been reset`);
+    } else if (isModOrBroadcaster && message.startsWith('!botshu reset')) {
+        // Remove "!botshu reset" from the message and get the words
+        const args = message.slice(14).split(' ');
+        // Get the name if given after the word "reset"
+        const firstArg = args.shift().toLowerCase();
+        if (userStrikes.has(firstArg)) {
+            // User found, reset their strikes
+            if (userStrikes.delete(firstArg)) {
+                // The username existed and has been removed
+                client.say(channel, `BotShu strikes have been reset for ${firstArg}`);
+            } else {
+                // Username not found
+                client.say(channel, `Username "${firstArg}" not found`);
+            }
+        }
+    }
+
     // Language processing logic
 
     // If this is production and the message is from a sub, mod or broadcaster, ignore
