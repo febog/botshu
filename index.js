@@ -8,6 +8,14 @@ const key = process.env.TEXT_ANALYTICS_KEY;
 const endpoint = 'https://botshu-language-detection.cognitiveservices.azure.com/';
 const textAnalyticsClient = new TextAnalyticsClient(endpoint, new AzureKeyCredential(key));
 
+const express = require('express');
+const app = express();
+const port = process.env.PORT || 3000;
+app.get('/', (req, res) => {
+    res.send('BotShu')
+});
+app.listen(port);
+
 const production = process.env.PRODUCTION_MONKAW === 'production';
 var botEnabled = false;
 var userStrikes = {};
