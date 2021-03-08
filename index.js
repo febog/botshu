@@ -60,10 +60,10 @@ client.on('message', async (channel, user, message, self) => {
             if (userStrikes.delete(firstArg)) {
                 // The username existed and has been removed
                 client.say(channel, `BotShu strikes have been reset for ${firstArg}`);
-            } else {
-                // Username not found
-                client.say(channel, `Username "${firstArg}" not found`);
             }
+        } else {
+            // Username not found
+            client.say(channel, `Username "${firstArg}" not found`);
         }
     }
 
