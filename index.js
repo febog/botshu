@@ -13,6 +13,7 @@ initializeServer();
 
 // Globals
 const production = process.env.PRODUCTION_MONKAW === 'production';
+const VERSION_NUMBER = 2;
 var botEnabled = false;
 var userStrikes = {};
 
@@ -218,7 +219,7 @@ function initializeServer() {
     const app = express();
     const port = process.env.PORT || 3000;
     app.get('/', (req, res) => {
-        res.send('BotShu');
+        res.send(`BotShu V${VERSION_NUMBER}`);
     });
     app.listen(port);
 }
