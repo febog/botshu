@@ -9,13 +9,7 @@ const endpoint = 'https://botshu-language-detection.cognitiveservices.azure.com/
 const textAnalyticsClient = new TextAnalyticsClient(endpoint, new AzureKeyCredential(key));
 
 // Add a server so that App Service can ping the app and get a response
-const express = require('express');
-const app = express();
-const port = process.env.PORT || 3000;
-app.get('/', (req, res) => {
-    res.send('BotShu')
-});
-app.listen(port);
+initializeServer();
 
 const production = process.env.PRODUCTION_MONKAW === 'production';
 var botEnabled = false;
@@ -150,4 +144,17 @@ function handleBotEnabledFlag(channel, message) {
  */
 function userCanManageBot(user) {
     return user.mod || user.badges?.broadcaster === '1';
+}
+
+/**
+ * Starts basic server using express.js
+ */
+function initializeServer() {
+    const express = require('express');
+    const app = express();
+    const port = process.env.PORT || 3000;
+    app.get('/', (req, res) => {
+        res.send('BotShu');
+    });
+    app.listen(port);
 }
