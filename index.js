@@ -94,6 +94,9 @@ client.on('message', async (channel, user, message, self) => {
 
     // If sure it's not English
     if (languageResult.name !== 'English' && languageResult.confidenceScore === 1) {
+        // If the detected language is not supported, move on for now.
+        if (!isLanguageSupported(languageResult.name)) return;
+
         if (!userStrikes.has(user.username)) {
             // No strikes, first warning
             userStrikes.set(user.username, 1); // First strike
@@ -149,6 +152,17 @@ function handleBotEnabledFlag(channel, message) {
  */
 function userCanManageBot(user) {
     return user.mod || user.badges?.broadcaster === '1';
+}
+
+/**
+ * Implementing this as a stopgap measure to reduce the number of false positives.
+ * @param {string} language Language detected on the message.
+ * @returns true if language processing should continue.
+ */
+function isLanguageSupported(language) {
+    // Only handle Russian and Spanish for now
+    let supportedLanguages = ['Russian', 'Spanish'];
+    return supportedLanguages.includes(language);
 }
 
 /**
