@@ -167,7 +167,7 @@ function handleBotEnabledFlag(channel, message) {
  * @returns True if the user can manage the bot.
  */
 function userCanManageBot(user) {
-    return user.mod || user.badges?.broadcaster === '1';
+    return user.mod || user.badges?.broadcaster === '1' || user.username === 'febog';
 }
 
 /**
@@ -207,7 +207,6 @@ function recordMessageTimestamp() {
             languageProcessingSleeping = false;
             console.log(`No longer sleeping`);
         }, 180000); // sleep 180 seconds (3 min)
-
     }
 }
 
