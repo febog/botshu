@@ -21,9 +21,6 @@ const production = process.env.PRODUCTION_MONKAW === 'production';
 var botEnabled = false;
 var userStrikes = {};
 
-// Connect to Mushu only in production
-var channels = process.env.PRODUCTION_MONKAW === 'production' ? ['mushu', 'febog'] : ['febog'];
-
 const client = new tmi.Client({
     connection: {
         secure: true,
@@ -33,7 +30,8 @@ const client = new tmi.Client({
         username: 'modshu',
         password: process.env.CHAT_ACCESS_TOKEN
     },
-    channels: channels
+    channels: process.env.PRODUCTION_MONKAW === 'production'
+        ? ['mushu', 'febog'] : ['febog']
 });
 
 client.connect();
