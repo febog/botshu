@@ -114,8 +114,8 @@ client.on('message', async (channel, user, message, self) => {
 
 /**
  * Get the language of a string.
- * @param {string} message Text to analyze
- * @returns DetectedLanguage object
+ * @param {string} message Text to analyze.
+ * @returns DetectedLanguage object.
  */
 async function languageDetection(message) {
     const languageResult = await textAnalyticsClient.detectLanguage([message]);
@@ -147,8 +147,8 @@ function handleBotEnabledFlag(channel, message) {
 /**
  * Returns true if the user can manage the bot.
  * Only moderators and the broadcaster can manage the bot.
- * @param {Object} user The user object given by tmi.js
- * @returns True if the user can manage the bot
+ * @param {Object} user The user object given by tmi.js.
+ * @returns True if the user can manage the bot.
  */
 function userCanManageBot(user) {
     return user.mod || user.badges?.broadcaster === '1';
