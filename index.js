@@ -43,26 +43,21 @@ client.on('message', async (channel, user, message, self) => {
     // If the message comes from the bot itself, ignore.
     if (self) return;
 
-    // Enable/disable logic
+    let canManageBot = userCanManageBot(user);
 
-    let isModOrBroadcaster = user.mod || user.badges?.broadcaster === '1';
-    if (!botEnabled && isModOrBroadcaster && (message === '!botshu on')) {
-        botEnabled = true;
-        userStrikes = new Map();
-        client.say(channel, `BotShu is now enabled mushHii`);
-    } else if (isModOrBroadcaster && (message === '!botshu off')) {
-        botEnabled = false;
-        userStrikes = {};
-        client.say(channel, `BotShu is now disabled PETTHEMODS`);
+    // Handle enable/disable logic
+    if (canManageBot) {
+        handleBotEnabledFlag(channel, message);
     }
+
     if (!botEnabled) return;
 
     // Configuration logic
 
-    if (isModOrBroadcaster && (message === '!botshu reset all')) {
+    if (canManageBot && (message === '!botshu reset all')) {
         userStrikes = new Map();
         client.say(channel, `Strikes have been reset`);
-    } else if (isModOrBroadcaster && message.startsWith('!botshu reset')) {
+    } else if (canManageBot && message.startsWith('!botshu reset')) {
         // Remove "!botshu reset" from the message and get the words
         const args = message.slice(14).split(' ');
         // Get the name if given after the word "reset"
@@ -77,7 +72,7 @@ client.on('message', async (channel, user, message, self) => {
             // Username not found
             client.say(channel, `Username "${firstArg}" not found`);
         }
-    } else if (isModOrBroadcaster && message.startsWith('!botshu count')) {
+    } else if (canManageBot && message.startsWith('!botshu count')) {
         // Remove "!botshu count" from the message and get the words
         const args = message.slice(14).split(' ');
         // Get the name if given after the word "count"
@@ -95,7 +90,7 @@ client.on('message', async (channel, user, message, self) => {
     // Language processing logic
 
     // If this is production and the message is from a sub, mod or broadcaster, ignore
-    if (production && (user.subscriber || isModOrBroadcaster)) return;
+    if (production && (user.subscriber || canManageBot)) return;
 
     // Get language information from the message contents using Azure text analytics
     let languageResult = await languageDetection(message);
@@ -130,4 +125,31 @@ async function languageDetection(message) {
         result = document.primaryLanguage;
     });
     return result;
+}
+
+/**
+ * Enable/disable logic.
+ * @param {string} channel
+ * @param {string} message
+ */
+function handleBotEnabledFlag(channel, message) {
+    if (!botEnabled && (message === '!botshu on')) {
+        botEnabled = true;
+        userStrikes = new Map();
+        client.say(channel, `BotShu is now enabled mushHii`);
+    } else if (message === '!botshu off') {
+        botEnabled = false;
+        userStrikes = {};
+        client.say(channel, `BotShu is now disabled PETTHEMODS`);
+    }
+}
+
+/**
+ * Returns true if the user can manage the bot.
+ * Only moderators and the broadcaster can manage the bot.
+ * @param {Object} user The user object given by tmi.js
+ * @returns True if the user can manage the bot
+ */
+function userCanManageBot(user) {
+    return user.mod || user.badges?.broadcaster === '1';
 }
