@@ -13,13 +13,13 @@ initializeServer();
 
 // Globals
 const production = process.env.PRODUCTION_MONKAW === 'production';
-const VERSION_NUMBER = 2;
+const VERSION_NUMBER = 3;
 var botEnabled = false;
 var userStrikes = {};
 
 // Throttling logic
 var messageTimes = [];
-const TIMESTAMP_ARRAY_SIZE = 4;
+const TIMESTAMP_ARRAY_SIZE = 10;
 var oldestTimestampIndex = 0;
 var newestTimestampIndex = TIMESTAMP_ARRAY_SIZE - 1;
 var languageProcessingSleeping = false;
@@ -201,13 +201,13 @@ function recordMessageTimestamp() {
     messageTimes[newestTimestampIndex] = Date.now();
     // Compare with old to see if it elapsed more than a second (these are milliseconds)
     let diff = messageTimes[newestTimestampIndex] - messageTimes[oldestTimestampIndex];
-    if (diff < 1000) {
+    if (diff < 2000) {
         console.log('Messages are occuring too fast, sleeping');
         languageProcessingSleeping = true;
         setTimeout(() => {
             languageProcessingSleeping = false;
             console.log(`No longer sleeping`);
-        }, 180000); // sleep 180 seconds (3 min)
+        }, 60000); // sleep 60 seconds (1 min)
     }
 }
 
