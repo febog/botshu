@@ -18,7 +18,7 @@ var userStrikes = {};
 
 // Throttling logic
 var messageTimes = [];
-const TIMESTAMP_ARRAY_SIZE = 5;
+const TIMESTAMP_ARRAY_SIZE = 4;
 var oldestTimestampIndex = 0;
 var newestTimestampIndex = TIMESTAMP_ARRAY_SIZE - 1;
 var languageProcessingSleeping = false;
