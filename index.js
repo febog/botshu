@@ -109,6 +109,11 @@ client.on('message', async (channel, user, message, self) => {
     }
 });
 
+/**
+ * Get the language of a string.
+ * @param {string} message Text to analyze
+ * @returns DetectedLanguage object
+ */
 async function languageDetection(message) {
     const languageResult = await textAnalyticsClient.detectLanguage([message]);
 
