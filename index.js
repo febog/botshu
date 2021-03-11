@@ -11,9 +11,21 @@ const textAnalyticsClient = new TextAnalyticsClient(endpoint, new AzureKeyCreden
 // Add a server so that App Service can ping the app and get a response
 initializeServer();
 
+// Globals
 const production = process.env.PRODUCTION_MONKAW === 'production';
 var botEnabled = false;
 var userStrikes = {};
+
+// Throttling logic
+var messageTimes = [];
+const TIMESTAMP_ARRAY_SIZE = 5;
+var oldestTimestampIndex = 0;
+var newestTimestampIndex = TIMESTAMP_ARRAY_SIZE - 1;
+var languageProcessingSleeping = false;
+// The timestamp array keeps track of the last
+// TIMESTAMP_ARRAY_SIZE messages to see if
+// messages are being sent too quickly.
+initializeTimestampArray();
 
 const client = new tmi.Client({
     connection: {
@@ -80,6 +92,10 @@ client.on('message', async (channel, user, message, self) => {
     }
 
     // Language processing logic
+
+    // Throttling
+    if (languageProcessingSleeping) return;
+    recordMessageTimestamp();
 
     // If this is production and the message is from a sub, mod or broadcaster, ignore
     if (production && (user.subscriber || canManageBot)) return;
@@ -163,6 +179,36 @@ function isLanguageSupported(language) {
     // Only handle Russian and Spanish for now
     let supportedLanguages = ['Russian', 'Spanish'];
     return supportedLanguages.includes(language);
+}
+
+function initializeTimestampArray() {
+    // Fill the circular array with zeros
+    for (let i = 0; i < TIMESTAMP_ARRAY_SIZE; i++) {
+        messageTimes.push(0);
+    }
+}
+
+// If more the newest and oldest timestamps have less than
+// a second of difference, it means that TIMESTAMP_ARRAY_SIZE
+// messages were sent in less than a second
+function recordMessageTimestamp() {
+    // Move oldest pointer
+    oldestTimestampIndex = ++oldestTimestampIndex % TIMESTAMP_ARRAY_SIZE;
+    // Move newest pointer
+    newestTimestampIndex = ++newestTimestampIndex % TIMESTAMP_ARRAY_SIZE;
+    // Write new newest value
+    messageTimes[newestTimestampIndex] = Date.now();
+    // Compare with old to see if it elapsed more than a second (these are milliseconds)
+    let diff = messageTimes[newestTimestampIndex] - messageTimes[oldestTimestampIndex];
+    if (diff < 1000) {
+        console.log('Messages are occuring too fast, sleeping');
+        languageProcessingSleeping = true;
+        setTimeout(() => {
+            languageProcessingSleeping = false;
+            console.log(`No longer sleeping`);
+        }, 180000); // sleep 180 seconds (3 min)
+
+    }
 }
 
 /**
