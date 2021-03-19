@@ -2,6 +2,7 @@
 // Felipe Bojorquez
 // 2021
 // Automatic !eng command. If a user is detected to not be in English, tag the user with a warning.
+require('dotenv').config();
 const tmi = require('tmi.js');
 const { TextAnalyticsClient, AzureKeyCredential } = require('@azure/ai-text-analytics');
 const key = process.env.TEXT_ANALYTICS_KEY;
