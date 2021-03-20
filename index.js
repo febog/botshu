@@ -2,18 +2,25 @@
 // Felipe Bojorquez
 // 2021
 // Automatic !eng command. If a user is detected to not be in English, tag the user with a warning.
-require('dotenv').config();
-const tmi = require('tmi.js');
-const { TextAnalyticsClient, AzureKeyCredential } = require('@azure/ai-text-analytics');
+require("dotenv").config();
+const tmi = require("tmi.js");
+const {
+    TextAnalyticsClient,
+    AzureKeyCredential,
+} = require("@azure/ai-text-analytics");
 const key = process.env.TEXT_ANALYTICS_KEY;
-const endpoint = 'https://botshu-language-detection.cognitiveservices.azure.com/';
-const textAnalyticsClient = new TextAnalyticsClient(endpoint, new AzureKeyCredential(key));
+const endpoint =
+    "https://botshu-language-detection.cognitiveservices.azure.com/";
+const textAnalyticsClient = new TextAnalyticsClient(
+    endpoint,
+    new AzureKeyCredential(key)
+);
 
 // Add a server so that App Service can ping the app and get a response
 initializeServer();
 
 // Globals
-const production = process.env.PRODUCTION_MONKAW === 'production';
+const production = process.env.PRODUCTION_MONKAW === "production";
 const VERSION_NUMBER = 3;
 var botEnabled = false;
 var userStrikes = {};
@@ -32,20 +39,22 @@ initializeTimestampArray();
 const client = new tmi.Client({
     connection: {
         secure: true,
-        reconnect: true
+        reconnect: true,
     },
     identity: {
-        username: 'modshu',
-        password: process.env.CHAT_ACCESS_TOKEN
+        username: "modshu",
+        password: process.env.CHAT_ACCESS_TOKEN,
     },
-    channels: process.env.PRODUCTION_MONKAW === 'production'
-        ? ['mushu', 'febog'] : ['febog']
+    channels:
+        process.env.PRODUCTION_MONKAW === "production"
+            ? ["mushu", "febog"]
+            : ["febog"],
 });
 
 client.connect();
 
 // Gets called every time a new message arrives to the chat
-client.on('message', async (channel, user, message, self) => {
+client.on("message", async (channel, user, message, self) => {
     // If the message comes from the bot itself, ignore.
     if (self) return;
 
@@ -60,12 +69,12 @@ client.on('message', async (channel, user, message, self) => {
 
     // Configuration logic
 
-    if (canManageBot && (message === '!botshu reset all')) {
+    if (canManageBot && message === "!botshu reset all") {
         userStrikes = new Map();
         client.say(channel, `Strikes have been reset`);
-    } else if (canManageBot && message.startsWith('!botshu reset')) {
+    } else if (canManageBot && message.startsWith("!botshu reset")) {
         // Remove "!botshu reset" from the message and get the words
-        const args = message.slice(14).split(' ');
+        const args = message.slice(14).split(" ");
         // Get the name if given after the word "reset"
         const firstArg = args.shift().toLowerCase();
         if (userStrikes.has(firstArg)) {
@@ -78,9 +87,9 @@ client.on('message', async (channel, user, message, self) => {
             // Username not found
             client.say(channel, `Username "${firstArg}" not found`);
         }
-    } else if (canManageBot && message.startsWith('!botshu count')) {
+    } else if (canManageBot && message.startsWith("!botshu count")) {
         // Remove "!botshu count" from the message and get the words
-        const args = message.slice(14).split(' ');
+        const args = message.slice(14).split(" ");
         // Get the name if given after the word "count"
         const firstArg = args.shift().toLowerCase();
         if (userStrikes.has(firstArg)) {
@@ -107,22 +116,33 @@ client.on('message', async (channel, user, message, self) => {
 
     // If debugging print detected language and confidence
     if (!production) {
-        console.log(`${user['display-name']}: ${message} (${languageResult.name} (${languageResult.confidenceScore}) detected)`);
+        console.log(
+            `${user["display-name"]}: ${message} (${languageResult.name} (${languageResult.confidenceScore}) detected)`
+        );
     }
 
     // If sure it's not English
-    if (languageResult.name !== 'English' && languageResult.confidenceScore === 1) {
+    if (
+        languageResult.name !== "English" &&
+        languageResult.confidenceScore === 1
+    ) {
         // If the detected language is not supported, move on for now.
         if (!isLanguageSupported(languageResult.name)) return;
 
         if (!userStrikes.has(user.username)) {
             // No strikes, first warning
             userStrikes.set(user.username, 1); // First strike
-            client.say(channel, `[WARNING] @${user.username} Keep the chat in English. Why? - !whyeng`);
+            client.say(
+                channel,
+                `[WARNING] @${user.username} Keep the chat in English. Why? - !whyeng`
+            );
         } else if (userStrikes.get(user.username) === 1) {
             // Second strike, last warning
             userStrikes.set(user.username, 2); // Second strike
-            client.say(channel, `[LAST WARNING] @${user.username} ENGLISH ONLY PLEASE. Why? - !whyeng`);
+            client.say(
+                channel,
+                `[LAST WARNING] @${user.username} ENGLISH ONLY PLEASE. Why? - !whyeng`
+            );
         } else if (userStrikes.get(user.username) >= 2) {
             // This is the third or more time, timeout
             client.timeout(channel, user.username, 600, "Chat not in English");
@@ -139,7 +159,7 @@ async function languageDetection(message) {
     const languageResult = await textAnalyticsClient.detectLanguage([message]);
 
     let result = {};
-    languageResult.forEach(document => {
+    languageResult.forEach((document) => {
         result = document.primaryLanguage;
     });
     return result;
@@ -151,11 +171,11 @@ async function languageDetection(message) {
  * @param {string} message
  */
 function handleBotEnabledFlag(channel, message) {
-    if (!botEnabled && (message === '!botshu on')) {
+    if (!botEnabled && message === "!botshu on") {
         botEnabled = true;
         userStrikes = new Map();
         client.say(channel, `BotShu is now enabled mushHii`);
-    } else if (message === '!botshu off') {
+    } else if (message === "!botshu off") {
         botEnabled = false;
         userStrikes = {};
         client.say(channel, `BotShu is now disabled PETTHEMODS`);
@@ -169,7 +189,11 @@ function handleBotEnabledFlag(channel, message) {
  * @returns True if the user can manage the bot.
  */
 function userCanManageBot(user) {
-    return user.mod || user.badges?.broadcaster === '1' || user.username === 'febog';
+    return (
+        user.mod ||
+        user.badges?.broadcaster === "1" ||
+        user.username === "febog"
+    );
 }
 
 /**
@@ -179,7 +203,7 @@ function userCanManageBot(user) {
  */
 function isLanguageSupported(language) {
     // Only handle Russian and Spanish for now
-    let supportedLanguages = ['Russian', 'Spanish'];
+    let supportedLanguages = ["Russian", "Spanish"];
     return supportedLanguages.includes(language);
 }
 
@@ -201,9 +225,10 @@ function recordMessageTimestamp() {
     // Write new newest value
     messageTimes[newestTimestampIndex] = Date.now();
     // Compare with old to see if it elapsed more than a second (these are milliseconds)
-    let diff = messageTimes[newestTimestampIndex] - messageTimes[oldestTimestampIndex];
+    let diff =
+        messageTimes[newestTimestampIndex] - messageTimes[oldestTimestampIndex];
     if (diff < 2000) {
-        console.log('Messages are occuring too fast, sleeping');
+        console.log("Messages are occuring too fast, sleeping");
         languageProcessingSleeping = true;
         setTimeout(() => {
             languageProcessingSleeping = false;
@@ -216,10 +241,10 @@ function recordMessageTimestamp() {
  * Starts basic server using express.js
  */
 function initializeServer() {
-    const express = require('express');
+    const express = require("express");
     const app = express();
     const port = process.env.PORT || 3000;
-    app.get('/', (req, res) => {
+    app.get("/", (req, res) => {
         res.send(`BotShu V${VERSION_NUMBER}`);
     });
     app.listen(port);
