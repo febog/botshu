@@ -1,6 +1,6 @@
 # BotShu
 
-Chat bot for Mushu. Automated `!eng` command. If a chat message is not in Enlish it reminds the user to follow the chat rules. After 3 strikes the user is timed out.
+Chat bot for Mushu. Automated `!eng` command. If a chat message is not in English it reminds the user to follow the chat rules. After 3 strikes the user is timed out.
 
 ## Commands
 
