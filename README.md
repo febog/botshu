@@ -1,10 +1,12 @@
 # BotShu
 
-Chat bot for Mushu. Automated `!eng` command. Detects messages from chat not in English and reminds the user to keep the chat in English. After 3 strikes the user is timed out.
+Chat bot for Mushu. Automated `!eng` command. If a chat message is not in Enlish it reminds the user to follow the chat rules. After 3 strikes the user is timed out.
 
 ## Commands
 
-- `!botshu on` / `!botshu off` Enable or disabled the bot.
-- `!botshu reset all` Reset strikes for all users.
-- `!botshu reset {username}` Reset stringes for the given user.
-- `!botshu count {username}` Returns the number of stringes for the given user.
+| Command                      | Description                                                                                       |
+| ---------------------------- | ------------------------------------------------------------------------------------------------- |
+| `!botshu on` / `!botshu off` | Enable or disable the bot.                                                                        |
+| `!botshu reset all`          | Reset strikes for all users.                                                                      |
+| `!botshu reset {username}`   | Reset strings for the given user.                                                                 |
+| `!botshu count {username}`   | Returns the number of stringes for the given user. Show file differences that haven't been staged |
