@@ -29,10 +29,7 @@ const client = new tmi.Client({
         username: "modshu",
         password: process.env.CHAT_ACCESS_TOKEN,
     },
-    channels:
-        process.env.PRODUCTION_MONKAW === "production"
-            ? ["mushu", "febog"]
-            : ["febog"],
+    channels: isProduction ? ["mushu", "febog"] : ["febog"],
 });
 
 client.connect();
