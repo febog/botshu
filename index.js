@@ -17,14 +17,15 @@ const textAnalyticsClient = new TextAnalyticsClient(
     new AzureKeyCredential(key)
 );
 
-// Add a server so that App Service can ping the app and get a response
-initializeServer();
-
 // Globals
 const production = process.env.PRODUCTION_MONKAW === "production";
-const VERSION_NUMBER = 3;
+const VERSION_NUMBER = "3";
 var botEnabled = false;
 var userStrikes = {};
+
+// Add a server so that App Service can ping the app and get a response
+const server = require("./server.js");
+server.initializeServer(VERSION_NUMBER);
 
 // Throttling logic
 var messageTimes = [];
@@ -240,17 +241,4 @@ function recordMessageTimestamp() {
             console.log(`No longer sleeping`);
         }, 60000); // sleep 60 seconds (1 min)
     }
-}
-
-/**
- * Starts basic server using express.js
- */
-function initializeServer() {
-    const express = require("express");
-    const app = express();
-    const port = process.env.PORT || 3000;
-    app.get("/", (req, res) => {
-        res.send(`BotShu V${VERSION_NUMBER}`);
-    });
-    app.listen(port);
 }
