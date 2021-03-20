@@ -13,10 +13,10 @@ var botEnabled = false;
 var userStrikes = {};
 
 // Add a server so that App Service can ping the app and get a response
-const server = require("./server.js");
+const server = require("./lib/server.js");
 server.initializeServer(VERSION_NUMBER);
 
-const lang = require("./language.js");
+const lang = require("./lib/language.js");
 
 // Throttling logic
 var messageTimes = [];
