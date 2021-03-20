@@ -5,17 +5,6 @@
 // user with a warning.
 require("dotenv").config();
 const tmi = require("tmi.js");
-const {
-    TextAnalyticsClient,
-    AzureKeyCredential,
-} = require("@azure/ai-text-analytics");
-const key = process.env.TEXT_ANALYTICS_KEY;
-const endpoint =
-    "https://botshu-language-detection.cognitiveservices.azure.com/";
-const textAnalyticsClient = new TextAnalyticsClient(
-    endpoint,
-    new AzureKeyCredential(key)
-);
 
 // Globals
 const production = process.env.PRODUCTION_MONKAW === "production";
@@ -26,6 +15,8 @@ var userStrikes = {};
 // Add a server so that App Service can ping the app and get a response
 const server = require("./server.js");
 server.initializeServer(VERSION_NUMBER);
+
+const lang = require("./language.js");
 
 // Throttling logic
 var messageTimes = [];
@@ -114,9 +105,7 @@ client.on("message", async (channel, user, message, self) => {
     // ignore
     if (production && (user.subscriber || canManageBot)) return;
 
-    // Get language information from the message contents using Azure text
-    // analytics
-    let languageResult = await languageDetection(message);
+    let languageResult = await lang.detectLanguage(message);
 
     // If debugging print detected language and confidence
     if (!production) {
@@ -153,21 +142,6 @@ client.on("message", async (channel, user, message, self) => {
         }
     }
 });
-
-/**
- * Get the language of a string.
- * @param {string} message Text to analyze.
- * @returns DetectedLanguage object.
- */
-async function languageDetection(message) {
-    const languageResult = await textAnalyticsClient.detectLanguage([message]);
-
-    let result = {};
-    languageResult.forEach((document) => {
-        result = document.primaryLanguage;
-    });
-    return result;
-}
 
 /**
  * Enable/disable logic.
