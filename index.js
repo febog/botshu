@@ -6,19 +6,11 @@
 require("dotenv").config();
 const tmi = require("tmi.js");
 
-// Globals
-const isProduction = process.env.PRODUCTION_MONKAW === "production";
-const VERSION_NUMBER = "3";
-var botEnabled = false;
-var userStrikes = {};
-var languageProcessingState = { sleeping: false };
-
-// Add a server so that App Service can ping the app and get a response
+const store = require("./lib/bot-state.js");
 const server = require("./lib/server.js");
-server.initializeServer(VERSION_NUMBER);
-
 const lang = require("./lib/language.js");
 const throttling = require("./lib/throttling.js");
+server.initializeServer(store.getVersion());
 
 const client = new tmi.Client({
     connection: {
@@ -29,7 +21,7 @@ const client = new tmi.Client({
         username: "modshu",
         password: process.env.CHAT_ACCESS_TOKEN,
     },
-    channels: isProduction ? ["mushu", "febog"] : ["febog"],
+    channels: store.isProduction() ? ["mushu", "febog"] : ["febog"],
 });
 
 client.connect();
@@ -43,24 +35,24 @@ client.on("message", async (channel, user, message, self) => {
 
     // Handle enable/disable logic
     if (canManageBot) {
-        handleBotEnabledFlag(channel, message);
+        handleBotEnabledFlag(channel, message, store);
     }
 
-    if (!botEnabled) return;
+    if (!store.isBotEnabled()) return;
 
     // Configuration logic
 
     if (canManageBot && message === "!botshu reset all") {
-        userStrikes = new Map();
+        store.resetAllStrikes();
         client.say(channel, `Strikes have been reset`);
     } else if (canManageBot && message.startsWith("!botshu reset")) {
         // Remove "!botshu reset" from the message and get the words
         const args = message.slice(14).split(" ");
         // Get the name if given after the word "reset"
         const firstArg = args.shift().toLowerCase();
-        if (userStrikes.has(firstArg)) {
+        if (store.userHasStrikes(firstArg)) {
             // User found, reset their strikes
-            if (userStrikes.delete(firstArg)) {
+            if (store.removeUserStrikes(firstArg)) {
                 // The username existed and has been removed
                 client.say(channel, `Strikes have been reset for ${firstArg}`);
             }
@@ -73,9 +65,9 @@ client.on("message", async (channel, user, message, self) => {
         const args = message.slice(14).split(" ");
         // Get the name if given after the word "count"
         const firstArg = args.shift().toLowerCase();
-        if (userStrikes.has(firstArg)) {
+        if (store.userHasStrikes(firstArg)) {
             // User found, print their strkes
-            let strikeCount = userStrikes.get(firstArg);
+            let strikeCount = store.getUserStrikes(firstArg);
             client.say(channel, `@${firstArg} has ${strikeCount} strikes`);
         } else {
             // Username not found
@@ -86,17 +78,17 @@ client.on("message", async (channel, user, message, self) => {
     // Language processing logic
 
     // Throttling
-    if (languageProcessingState.sleeping) return;
-    throttling.checkThrottling(languageProcessingState);
+    if (store.getLanguageSleepState().sleeping) return;
+    throttling.checkThrottling(store.getLanguageSleepState());
 
     // If this is production and the message is from a sub, mod or broadcaster,
     // ignore
-    if (isProduction && (user.subscriber || canManageBot)) return;
+    if (store.isProduction() && (user.subscriber || canManageBot)) return;
 
     let languageResult = await lang.detectLanguage(message);
 
     // If debugging print detected language and confidence
-    if (!isProduction) {
+    if (!store.isProduction()) {
         console.log(
             `${user["display-name"]}: ${message} (${languageResult.name} (${languageResult.confidenceScore}) detected)`
         );
@@ -110,21 +102,21 @@ client.on("message", async (channel, user, message, self) => {
         // If the detected language is not supported, move on for now.
         if (!isLanguageSupported(languageResult.name)) return;
 
-        if (!userStrikes.has(user.username)) {
+        if (!store.userHasStrikes(user.username)) {
             // No strikes, first warning
-            userStrikes.set(user.username, 1); // First strike
+            store.addUserStrike(user.username); // First strike
             client.say(
                 channel,
                 `[WARNING] @${user.username} Keep the chat in English. Why? - !whyeng`
             );
-        } else if (userStrikes.get(user.username) === 1) {
+        } else if (store.getUserStrikes(user.username) === 1) {
             // Second strike, last warning
-            userStrikes.set(user.username, 2); // Second strike
+            store.addUserStrike(user.username); // Second strike
             client.say(
                 channel,
                 `[LAST WARNING] @${user.username} ENGLISH ONLY PLEASE. Why? - !whyeng`
             );
-        } else if (userStrikes.get(user.username) >= 2) {
+        } else if (store.getUserStrikes(user.username) >= 2) {
             // This is the third or more time, timeout
             client.timeout(channel, user.username, 600, "Chat not in English");
         }
@@ -133,17 +125,16 @@ client.on("message", async (channel, user, message, self) => {
 
 /**
  * Enable/disable logic.
- * @param {string} channel
- * @param {string} message
+ * @param {string} channel Channel name.
+ * @param {string} message Message received.
+ * @param {Object} store Bot state.
  */
-function handleBotEnabledFlag(channel, message) {
-    if (!botEnabled && message === "!botshu on") {
-        botEnabled = true;
-        userStrikes = new Map();
+function handleBotEnabledFlag(channel, message, store) {
+    if (!store.isBotEnabled() && message === "!botshu on") {
+        store.turnBotOn();
         client.say(channel, `BotShu is now enabled mushHii`);
     } else if (message === "!botshu off") {
-        botEnabled = false;
-        userStrikes = {};
+        store.turnBotOff();
         client.say(channel, `BotShu is now disabled PETTHEMODS`);
     }
 }
