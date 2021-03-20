@@ -1,7 +1,8 @@
 // BotShu
 // Felipe Bojorquez
 // 2021
-// Automatic !eng command. If a user is detected to not be in English, tag the user with a warning.
+// Automatic !eng command. If a user is detected to not be in English, tag the
+// user with a warning.
 require("dotenv").config();
 const tmi = require("tmi.js");
 const {
@@ -108,10 +109,12 @@ client.on("message", async (channel, user, message, self) => {
     if (languageProcessingSleeping) return;
     recordMessageTimestamp();
 
-    // If this is production and the message is from a sub, mod or broadcaster, ignore
+    // If this is production and the message is from a sub, mod or broadcaster,
+    // ignore
     if (production && (user.subscriber || canManageBot)) return;
 
-    // Get language information from the message contents using Azure text analytics
+    // Get language information from the message contents using Azure text
+    // analytics
     let languageResult = await languageDetection(message);
 
     // If debugging print detected language and confidence
@@ -197,7 +200,8 @@ function userCanManageBot(user) {
 }
 
 /**
- * Implementing this as a stopgap measure to reduce the number of false positives.
+ * Implementing this as a stopgap measure to reduce the number of false
+ * positives.
  * @param {string} language Language detected on the message.
  * @returns true if language processing should continue.
  */
@@ -224,7 +228,8 @@ function recordMessageTimestamp() {
     newestTimestampIndex = ++newestTimestampIndex % TIMESTAMP_ARRAY_SIZE;
     // Write new newest value
     messageTimes[newestTimestampIndex] = Date.now();
-    // Compare with old to see if it elapsed more than a second (these are milliseconds)
+    // Compare with old to see if it elapsed more than a second (these are
+    // milliseconds)
     let diff =
         messageTimes[newestTimestampIndex] - messageTimes[oldestTimestampIndex];
     if (diff < 2000) {
