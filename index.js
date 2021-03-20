@@ -10,6 +10,7 @@ const store = require("./lib/bot-state.js");
 const server = require("./lib/server.js");
 const lang = require("./lib/language.js");
 const throttling = require("./lib/throttling.js");
+const management = require("./lib/management.js");
 server.initializeServer(store.getVersion());
 
 const client = new tmi.Client({
@@ -40,39 +41,8 @@ client.on("message", async (channel, user, message, self) => {
 
     if (!store.isBotEnabled()) return;
 
-    // Configuration logic
-
-    if (canManageBot && message === "!botshu reset all") {
-        store.resetAllStrikes();
-        client.say(channel, `Strikes have been reset`);
-    } else if (canManageBot && message.startsWith("!botshu reset")) {
-        // Remove "!botshu reset" from the message and get the words
-        const args = message.slice(14).split(" ");
-        // Get the name if given after the word "reset"
-        const firstArg = args.shift().toLowerCase();
-        if (store.userHasStrikes(firstArg)) {
-            // User found, reset their strikes
-            if (store.removeUserStrikes(firstArg)) {
-                // The username existed and has been removed
-                client.say(channel, `Strikes have been reset for ${firstArg}`);
-            }
-        } else {
-            // Username not found
-            client.say(channel, `Username "${firstArg}" not found`);
-        }
-    } else if (canManageBot && message.startsWith("!botshu count")) {
-        // Remove "!botshu count" from the message and get the words
-        const args = message.slice(14).split(" ");
-        // Get the name if given after the word "count"
-        const firstArg = args.shift().toLowerCase();
-        if (store.userHasStrikes(firstArg)) {
-            // User found, print their strkes
-            let strikeCount = store.getUserStrikes(firstArg);
-            client.say(channel, `@${firstArg} has ${strikeCount} strikes`);
-        } else {
-            // Username not found
-            client.say(channel, `Username "${firstArg}" has no strikes`);
-        }
+    if (canManageBot) {
+        management.runManagementCommands(client, channel, user, message, store);
     }
 
     // Language processing logic
