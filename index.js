@@ -7,7 +7,7 @@ require("dotenv").config();
 const tmi = require("tmi.js");
 
 // Globals
-const production = process.env.PRODUCTION_MONKAW === "production";
+const isProduction = process.env.PRODUCTION_MONKAW === "production";
 const VERSION_NUMBER = "3";
 var botEnabled = false;
 var userStrikes = {};
@@ -94,12 +94,12 @@ client.on("message", async (channel, user, message, self) => {
 
     // If this is production and the message is from a sub, mod or broadcaster,
     // ignore
-    if (production && (user.subscriber || canManageBot)) return;
+    if (isProduction && (user.subscriber || canManageBot)) return;
 
     let languageResult = await lang.detectLanguage(message);
 
     // If debugging print detected language and confidence
-    if (!production) {
+    if (!isProduction) {
         console.log(
             `${user["display-name"]}: ${message} (${languageResult.name} (${languageResult.confidenceScore}) detected)`
         );
