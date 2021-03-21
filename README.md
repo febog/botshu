@@ -11,3 +11,4 @@ Chat bot for Mushu. Automated `!eng` command. If a chat message is not in Englis
 | `!botshu reset all`        | Reset strikes for all users.                                                                      |
 | `!botshu reset {username}` | Reset strikes for the given user.                                                                 |
 | `!botshu count {username}` | Returns the number of stringes for the given user. Show file differences that haven't been staged |
+| `!botshu status`           | Returns the bot enabled/disabled state.                                                           |
