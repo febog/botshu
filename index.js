@@ -10,6 +10,7 @@ const store = require("./lib/bot-state.js");
 const server = require("./lib/server.js");
 const management = require("./lib/management.js");
 const lang = require("./lib/language.js");
+const onOff = require("./lib/enable-disable.js");
 server.initializeServer(store.getVersion());
 
 const client = new tmi.Client({
@@ -33,9 +34,8 @@ client.on("message", async (channel, user, message, self) => {
 
     let canManageBot = userCanManageBot(user);
 
-    // Handle enable/disable logic
     if (canManageBot) {
-        handleBotEnabledFlag(channel, message, store);
+        onOff.runEnableDisableCommands(client, channel, user, message, store);
     }
 
     if (!store.isBotEnabled()) return;
@@ -46,22 +46,6 @@ client.on("message", async (channel, user, message, self) => {
 
     await lang.handleMessageLanguage(client, channel, user, message, store);
 });
-
-/**
- * Enable/disable logic.
- * @param {string} channel Channel name.
- * @param {string} message Message received.
- * @param {Object} store Bot state.
- */
-function handleBotEnabledFlag(channel, message, store) {
-    if (!store.isBotEnabled() && message === "!botshu on") {
-        store.turnBotOn();
-        client.say(channel, `BotShu is now enabled mushHii`);
-    } else if (message === "!botshu off") {
-        store.turnBotOff();
-        client.say(channel, `BotShu is now disabled PETTHEMODS`);
-    }
-}
 
 /**
  * Returns true if the user can manage the bot.
