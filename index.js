@@ -8,9 +8,8 @@ const tmi = require("tmi.js");
 
 const store = require("./lib/bot-state.js");
 const server = require("./lib/server.js");
-const languageDetection = require("./lib/language-detection.js");
-const throttling = require("./lib/throttling.js");
 const management = require("./lib/management.js");
+const lang = require("./lib/language.js");
 server.initializeServer(store.getVersion());
 
 const client = new tmi.Client({
@@ -45,52 +44,7 @@ client.on("message", async (channel, user, message, self) => {
         management.runManagementCommands(client, channel, user, message, store);
     }
 
-    // Language processing logic
-
-    // Throttling
-    if (store.getLanguageSleepState().sleeping) return;
-    throttling.checkThrottling(store.getLanguageSleepState());
-
-    // If this is production and the message is from a sub, mod or broadcaster,
-    // ignore
-    if (store.isProduction() && (user.subscriber || canManageBot)) return;
-
-    let languageResult = await languageDetection.detectLanguage(message);
-
-    // If debugging print detected language and confidence
-    if (!store.isProduction()) {
-        console.log(
-            `${user["display-name"]}: ${message} (${languageResult.name} (${languageResult.confidenceScore}) detected)`
-        );
-    }
-
-    // If sure it's not English
-    if (
-        languageResult.name !== "English" &&
-        languageResult.confidenceScore === 1
-    ) {
-        // If the detected language is not supported, move on for now.
-        if (!isLanguageSupported(languageResult.name)) return;
-
-        if (!store.userHasStrikes(user.username)) {
-            // No strikes, first warning
-            store.addUserStrike(user.username); // First strike
-            client.say(
-                channel,
-                `[WARNING] @${user.username} Keep the chat in English. Why? - !whyeng`
-            );
-        } else if (store.getUserStrikes(user.username) === 1) {
-            // Second strike, last warning
-            store.addUserStrike(user.username); // Second strike
-            client.say(
-                channel,
-                `[LAST WARNING] @${user.username} ENGLISH ONLY PLEASE. Why? - !whyeng`
-            );
-        } else if (store.getUserStrikes(user.username) >= 2) {
-            // This is the third or more time, timeout
-            client.timeout(channel, user.username, 600, "Chat not in English");
-        }
-    }
+    await lang.handleMessageLanguage(client, channel, user, message, store);
 });
 
 /**
@@ -121,16 +75,4 @@ function userCanManageBot(user) {
         user.badges?.broadcaster === "1" ||
         user.username === "febog"
     );
-}
-
-/**
- * Implementing this as a stopgap measure to reduce the number of false
- * positives.
- * @param {string} language Language detected on the message.
- * @returns true if language processing should continue.
- */
-function isLanguageSupported(language) {
-    // Only handle Russian and Spanish for now
-    let supportedLanguages = ["Russian", "Spanish"];
-    return supportedLanguages.includes(language);
 }
