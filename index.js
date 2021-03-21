@@ -7,10 +7,10 @@ require("dotenv").config();
 const tmi = require("tmi.js");
 const store = require("./lib/bot-state.js");
 const server = require("./lib/server.js");
-const management = require("./lib/management.js");
 const lang = require("./lib/language.js");
-const onOff = require("./lib/enable-disable.js");
-const publicCommands = require("./lib/public-commands.js");
+const onOff = require("./lib/commands/enable-disable.js");
+const management = require("./lib/commands/management.js");
+const publicCommands = require("./lib/commands/public-commands.js");
 
 const client = new tmi.Client({
     connection: {
