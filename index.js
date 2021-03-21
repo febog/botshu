@@ -10,6 +10,7 @@ const server = require("./lib/server.js");
 const management = require("./lib/management.js");
 const lang = require("./lib/language.js");
 const onOff = require("./lib/enable-disable.js");
+const publicCommands = require("./lib/public-commands.js");
 
 const client = new tmi.Client({
     connection: {
@@ -41,6 +42,8 @@ client.on("message", async (channel, user, message, self) => {
     }
 
     await lang.handleMessageLanguage(client, channel, user, message, store);
+
+    publicCommands.runPublicCommands(client, channel, user, message, store);
 });
 
 /**
