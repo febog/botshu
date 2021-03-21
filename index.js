@@ -8,7 +8,7 @@ const tmi = require("tmi.js");
 
 const store = require("./lib/bot-state.js");
 const server = require("./lib/server.js");
-const lang = require("./lib/language.js");
+const languageDetection = require("./lib/language-detection.js");
 const throttling = require("./lib/throttling.js");
 const management = require("./lib/management.js");
 server.initializeServer(store.getVersion());
@@ -55,7 +55,7 @@ client.on("message", async (channel, user, message, self) => {
     // ignore
     if (store.isProduction() && (user.subscriber || canManageBot)) return;
 
-    let languageResult = await lang.detectLanguage(message);
+    let languageResult = await languageDetection.detectLanguage(message);
 
     // If debugging print detected language and confidence
     if (!store.isProduction()) {
