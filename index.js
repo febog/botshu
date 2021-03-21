@@ -5,13 +5,11 @@
 // user with a warning.
 require("dotenv").config();
 const tmi = require("tmi.js");
-
 const store = require("./lib/bot-state.js");
 const server = require("./lib/server.js");
 const management = require("./lib/management.js");
 const lang = require("./lib/language.js");
 const onOff = require("./lib/enable-disable.js");
-server.initializeServer(store.getVersion());
 
 const client = new tmi.Client({
     connection: {
@@ -24,8 +22,6 @@ const client = new tmi.Client({
     },
     channels: store.isProduction() ? ["mushu", "febog"] : ["febog"],
 });
-
-client.connect();
 
 // Gets called every time a new message arrives to the chat
 client.on("message", async (channel, user, message, self) => {
@@ -60,3 +56,6 @@ function userCanManageBot(user) {
         user.username === "febog"
     );
 }
+
+server.initializeServer(store.getVersion());
+client.connect();
