@@ -1,8 +1,6 @@
 // BotShu
 // Felipe Bojorquez
 // 2021
-// Automatic !eng command. If a user is detected to not be in English, tag the
-// user with a warning.
 require("dotenv").config();
 const tmi = require("tmi.js");
 const store = require("./lib/bot-state.js");
