@@ -46,7 +46,7 @@ client.on("message", async (channel, user, message, self) => {
 
     await lang.handleMessageLanguage(client, channel, user, message, store);
 
-    publicCommands.runPublicCommands(client, channel, user, message, store);
+    publicCommands.runPublicHandlers(p);
 
     if (!user.subscriber) {
         nonSub.handleNonSubMessages(p);
