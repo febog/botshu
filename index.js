@@ -7,10 +7,7 @@ const store = require("./lib/bot-state.js");
 const server = require("./lib/server.js");
 const lang = require("./lib/language/language.js");
 const parameters = require("./lib/handlers/handler-parameter.js");
-const onOff = require("./lib/handlers/enable-disable.js");
-const management = require("./lib/handlers/management.js");
-const publicCommands = require("./lib/handlers/public.js");
-const nonSub = require("./lib/handlers/nonsub.js");
+const messageHandlers = require("./lib/handlers/message-handlers.js");
 
 const client = new tmi.Client({
     connection: {
@@ -29,43 +26,13 @@ client.on("message", async (channel, user, message, self) => {
     // If the message comes from the bot itself, ignore.
     if (self) return;
 
-    let canManageBot = userCanManageBot(user);
-
     parameters.setParameters(client, channel, user, message, store);
     let p = parameters.getParameters();
 
-    if (canManageBot) {
-        onOff.runEnableDisableHandlers(p);
-    }
-
-    if (!store.isBotEnabled()) return;
-
-    if (canManageBot) {
-        management.runManagementHandlers(p);
-    }
+    messageHandlers.handleMessages(p);
 
     await lang.handleMessageLanguage(p);
-
-    publicCommands.runPublicHandlers(p);
-
-    if (!user.subscriber) {
-        nonSub.handleNonSubMessages(p);
-    }
 });
-
-/**
- * Returns true if the user can manage the bot.
- * Only moderators and the broadcaster can manage the bot.
- * @param {Object} user The user object given by tmi.js.
- * @returns True if the user can manage the bot.
- */
-function userCanManageBot(user) {
-    return (
-        user.mod ||
-        user.badges?.broadcaster === "1" ||
-        user.username === "febog"
-    );
-}
 
 server.initializeServer(store.getVersion());
 client.connect();
