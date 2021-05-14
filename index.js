@@ -10,7 +10,7 @@ const parameters = require("./lib/handlers/handler-parameter.js");
 const onOff = require("./lib/handlers/enable-disable.js");
 const management = require("./lib/handlers/management.js");
 const publicCommands = require("./lib/handlers/public-commands.js");
-const nonSub = require("./lib/handlers/nonsub-handler.js");
+const nonSub = require("./lib/handlers/nonsub.js");
 
 const client = new tmi.Client({
     connection: {
