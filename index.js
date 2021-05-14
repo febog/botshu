@@ -10,6 +10,7 @@ const parameters = require("./lib/handlers/handler-parameter.js");
 const onOff = require("./lib/handlers/enable-disable.js");
 const management = require("./lib/handlers/management.js");
 const publicCommands = require("./lib/handlers/public-commands.js");
+const nonSub = require("./lib/handlers/nonsub-handler.js");
 
 const client = new tmi.Client({
     connection: {
@@ -46,6 +47,10 @@ client.on("message", async (channel, user, message, self) => {
     await lang.handleMessageLanguage(client, channel, user, message, store);
 
     publicCommands.runPublicCommands(client, channel, user, message, store);
+
+    if (!user.subscriber) {
+        nonSub.handleNonSubMessages(p);
+    }
 });
 
 /**
