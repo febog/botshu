@@ -44,7 +44,7 @@ client.on("message", async (channel, user, message, self) => {
         management.runManagementHandlers(p);
     }
 
-    await lang.handleMessageLanguage(client, channel, user, message, store);
+    await lang.handleMessageLanguage(p);
 
     publicCommands.runPublicHandlers(p);
 
