@@ -40,7 +40,7 @@ client.on("message", async (channel, user, message, self) => {
     if (!store.isBotEnabled()) return;
 
     if (canManageBot) {
-        management.runManagementCommands(client, channel, user, message, store);
+        management.runManagementCommands(p);
     }
 
     await lang.handleMessageLanguage(client, channel, user, message, store);
