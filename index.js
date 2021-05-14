@@ -29,7 +29,7 @@ client.on("message", async (channel, user, message, self) => {
     parameters.setParameters(client, channel, user, message, store);
     let p = parameters.getParameters();
 
-    messageHandlers.handleMessages(p);
+    messageHandlers.handleMessage(p);
 
     await lang.handleMessageLanguage(p);
 });
