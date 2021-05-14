@@ -6,6 +6,7 @@ const tmi = require("tmi.js");
 const store = require("./lib/bot-state.js");
 const server = require("./lib/server.js");
 const lang = require("./lib/language/language.js");
+const parameters = require("./lib/handlers/handler-parameter.js");
 const onOff = require("./lib/handlers/enable-disable.js");
 const management = require("./lib/handlers/management.js");
 const publicCommands = require("./lib/handlers/public-commands.js");
@@ -29,8 +30,11 @@ client.on("message", async (channel, user, message, self) => {
 
     let canManageBot = userCanManageBot(user);
 
+    parameters.setParameters(client, channel, user, message, store);
+    let p = parameters.getParameters();
+
     if (canManageBot) {
-        onOff.runEnableDisableCommands(client, channel, user, message, store);
+        onOff.runEnableDisableCommands(p);
     }
 
     if (!store.isBotEnabled()) return;
