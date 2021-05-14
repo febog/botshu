@@ -34,13 +34,13 @@ client.on("message", async (channel, user, message, self) => {
     let p = parameters.getParameters();
 
     if (canManageBot) {
-        onOff.runEnableDisableCommands(p);
+        onOff.runEnableDisableHandlers(p);
     }
 
     if (!store.isBotEnabled()) return;
 
     if (canManageBot) {
-        management.runManagementCommands(p);
+        management.runManagementHandlers(p);
     }
 
     await lang.handleMessageLanguage(client, channel, user, message, store);
