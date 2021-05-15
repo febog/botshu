@@ -13,6 +13,7 @@
     "@azure/ai-text-analytics": "^5.0.1",
     "dotenv": "^8.6.0",
     "express": "^4.17.1",
+    "lodash.throttle": "^4.1.1",
     "tmi.js": "^1.8.3"
   }
 }
