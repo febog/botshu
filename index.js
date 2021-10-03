@@ -34,5 +34,6 @@ client.on("message", async (channel, user, message, self) => {
     await lang.handleMessageLanguage(p);
 });
 
+store.initBot();
 server.initializeServer(store.getBotVersion());
 client.connect();
