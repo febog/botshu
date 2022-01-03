@@ -4,7 +4,7 @@
 require("dotenv").config();
 const tmi = require("tmi.js");
 const store = require("./lib/global-bot-state.js");
-const server = require("./lib/server.js");
+const server = require("./lib/app.js");
 const lang = require("./lib/language/language.js");
 const parameters = require("./lib/handlers/handler-parameter.js");
 const messageHandlers = require("./lib/handlers/message-handlers.js");
