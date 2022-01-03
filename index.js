@@ -3,7 +3,7 @@
 // 2021
 require("dotenv").config();
 const tmi = require("tmi.js");
-const store = require("./lib/bot-state.js");
+const store = require("./lib/global-bot-state.js");
 const server = require("./lib/server.js");
 const lang = require("./lib/language/language.js");
 const parameters = require("./lib/handlers/handler-parameter.js");
