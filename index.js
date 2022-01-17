@@ -6,7 +6,7 @@ const tmi = require("tmi.js");
 const store = require("./lib/global-bot-state.js");
 const server = require("./lib/server/app.js");
 const lang = require("./lib/language/language.js");
-const parameters = require("./lib/commands/handler-parameter.js");
+const parameters = require("./lib/commands/common/handler-parameter.js");
 const messageHandlers = require("./lib/commands/message-handlers.js");
 
 const client = new tmi.Client({
