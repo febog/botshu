@@ -6,7 +6,7 @@ const tmi = require("tmi.js");
 const store = require("./lib/global-bot-state.js");
 const server = require("./lib/server/app.js");
 const lang = require("./lib/language/language.js");
-const parameters = require("./lib/commands/common/handler-parameter.js");
+const parametersClient = require("./lib/commands/common/handler-parameter.js");
 const messageHandlers = require("./lib/commands/message-handlers.js");
 
 const client = new tmi.Client({
@@ -26,8 +26,8 @@ client.on("message", async (channel, user, message, self) => {
     // If the message comes from the bot itself, ignore.
     if (self) return;
 
-    parameters.setParameters(client, channel, user, message, store);
-    let p = parameters.getParameters();
+    parametersClient.setParameters(client, channel, user, message, store);
+    let p = parametersClient.getParameters();
 
     messageHandlers.handleMessage(p);
 
