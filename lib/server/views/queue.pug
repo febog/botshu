@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  h1= title
+  h2 Today's song queue
+  p
+    | To add a new song to the queue use the #[code !sr [youtube link]]' 
+    | command in chat.
+  ul
+    each val in [1, 2, 3, 4, 5]
+      li= val
