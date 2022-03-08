@@ -3,6 +3,10 @@ extends layout
 block content
   h1 Today's song queue
   p
+    a(href='/') Home
+    |  » 
+    a(href='/queue') Song queue
+  p
     | To add a new song to the queue use the #[code !sr (youtube link)] 
     | command in chat.
   p A total of #{queue.length} songs have been queued this stream.
