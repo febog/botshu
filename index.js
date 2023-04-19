@@ -1,6 +1,6 @@
 // BotShu
 // Felipe Bojorquez
-// 2021
+// 2021-2023
 require("dotenv").config();
 const { RefreshingAuthProvider } = require("@twurple/auth");
 const { ChatClient } = require("@twurple/chat");
