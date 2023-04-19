@@ -4,6 +4,7 @@
 require("dotenv").config();
 const { RefreshingAuthProvider } = require("@twurple/auth");
 const { ChatClient } = require("@twurple/chat");
+const { ApiClient } = require("@twurple/api");
 const storage = require("./lib/storage/storage.js");
 const store = require("./lib/global-bot-state.js");
 const server = require("./lib/server/app.js");
@@ -28,6 +29,9 @@ async function startBotshu() {
 
     await authProvider.addUserForToken(tokenData, ["chat"]);
 
+    // Create Twitch API client
+    const apiClient = new ApiClient({ authProvider });
+
     // Connect to chat
     const channels = store.isProduction() ? ["mushu", "febog"] : ["febog"];
     const chatClient = new ChatClient({ authProvider, channels });
@@ -38,6 +42,7 @@ async function startBotshu() {
 
         parametersClient.setParameters(
             chatClient,
+            apiClient,
             channel,
             user,
             text,
