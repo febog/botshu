@@ -31,6 +31,11 @@ async function startBotshu() {
     const botTokenBlob = `token.${process.env.TWITCH_USER_ID_MODSHU}.json`;
     const botTokenData = await storage.readJsonFromBlobStorage(botTokenBlob);
     await authProvider.addUserForToken(botTokenData, ["chat"]);
+    const streamTokenBlob = `token.${process.env.TWITCH_USER_ID_MUSHU}.json`;
+    const streamTokenData = await storage.readJsonFromBlobStorage(
+        streamTokenBlob
+    );
+    await authProvider.addUserForToken(streamTokenData);
 
     // Create Twitch API client
     const apiClient = new ApiClient({ authProvider });
@@ -60,9 +65,9 @@ async function startBotshu() {
     });
 
     // // Setup WebSocket EventSub listener for listening to stream changes
-    // const listener = new EventSubWsListener({ apiClient });
-    // listener.start();
-    // stream.setupStreamState(apiClient, chatClient, listener, store);
+    const listener = new EventSubWsListener({ apiClient });
+    listener.start();
+    stream.setupStreamState(apiClient, chatClient, listener, store);
 
     chatClient.connect();
 
