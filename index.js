@@ -5,7 +5,9 @@ require("dotenv").config();
 const { RefreshingAuthProvider } = require("@twurple/auth");
 const { ChatClient } = require("@twurple/chat");
 const { ApiClient } = require("@twurple/api");
+const { EventSubWsListener  } = require("@twurple/eventsub-ws");
 const storage = require("./lib/storage/storage.js");
+const stream = require("./lib/stream/stream.js");
 const store = require("./lib/global-bot-state.js");
 const server = require("./lib/server/app.js");
 const lang = require("./lib/language/language.js");
@@ -55,6 +57,11 @@ async function startBotshu() {
 
         await lang.handleMessageLanguage(p);
     });
+
+    // // Setup WebSocket EventSub listener for listening to stream changes
+    // const listener = new EventSubWsListener({ apiClient });
+    // listener.start();
+    // stream.setupStreamState(apiClient, chatClient, listener, store);
 
     chatClient.connect();
 
