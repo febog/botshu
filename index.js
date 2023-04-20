@@ -26,7 +26,7 @@ async function startBotshu() {
         onRefresh: async (userId, newTokenData) =>
             await storage.storeJsonToBlobStorage(
                 newTokenData,
-                `tokens.${userId}.json`
+                `token.${userId}.json`
             ),
     });
 
