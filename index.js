@@ -18,8 +18,6 @@ async function startBotshu() {
     // Prepare Twurple authentication provider
     const clientId = process.env.TWITCH_CLIENT_ID;
     const clientSecret = process.env.TWITCH_CLIENT_SECRET;
-    const botTokenBlob = `token.${process.env.TWITCH_USER_ID_MODSHU}.json`;
-    const tokenData = await storage.readJsonFromBlobStorage(botTokenBlob);
     const authProvider = new RefreshingAuthProvider({
         clientId,
         clientSecret,
@@ -30,6 +28,8 @@ async function startBotshu() {
             ),
     });
 
+    const botTokenBlob = `token.${process.env.TWITCH_USER_ID_MODSHU}.json`;
+    const tokenData = await storage.readJsonFromBlobStorage(botTokenBlob);
     await authProvider.addUserForToken(tokenData, ["chat"]);
 
     // Create Twitch API client
