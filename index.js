@@ -59,9 +59,9 @@ async function startBotshu() {
     });
 
     // // Setup WebSocket EventSub listener for listening to stream changes
-    // const listener = new EventSubWsListener({ apiClient });
-    // listener.start();
-    // stream.setupStreamState(apiClient, chatClient, listener, store);
+    const listener = new EventSubWsListener({ apiClient });
+    listener.start();
+    stream.setupStreamState(apiClient, chatClient, listener, store);
 
     chatClient.connect();
 
