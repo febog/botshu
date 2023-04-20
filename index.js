@@ -5,7 +5,7 @@ require("dotenv").config();
 const { RefreshingAuthProvider } = require("@twurple/auth");
 const { ChatClient } = require("@twurple/chat");
 const { ApiClient } = require("@twurple/api");
-const { EventSubWsListener  } = require("@twurple/eventsub-ws");
+const { EventSubWsListener } = require("@twurple/eventsub-ws");
 const storage = require("./lib/storage/storage.js");
 const stream = require("./lib/stream/stream.js");
 const store = require("./lib/global-bot-state.js");
@@ -18,14 +18,15 @@ async function startBotshu() {
     // Prepare Twurple authentication provider
     const clientId = process.env.TWITCH_CLIENT_ID;
     const clientSecret = process.env.TWITCH_CLIENT_SECRET;
-    const tokenData = await storage.readJsonFromBlobStorage("token-data.json");
+    const botTokenBlob = `token.${process.env.TWITCH_USER_ID_MODSHU}.json`;
+    const tokenData = await storage.readJsonFromBlobStorage(botTokenBlob);
     const authProvider = new RefreshingAuthProvider({
         clientId,
         clientSecret,
         onRefresh: async (userId, newTokenData) =>
             await storage.storeJsonToBlobStorage(
                 newTokenData,
-                "token-data.json"
+                `tokens.${userId}.json`
             ),
     });
 
