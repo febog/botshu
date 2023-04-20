@@ -29,8 +29,8 @@ async function startBotshu() {
     });
 
     const botTokenBlob = `token.${process.env.TWITCH_USER_ID_MODSHU}.json`;
-    const tokenData = await storage.readJsonFromBlobStorage(botTokenBlob);
-    await authProvider.addUserForToken(tokenData, ["chat"]);
+    const botTokenData = await storage.readJsonFromBlobStorage(botTokenBlob);
+    await authProvider.addUserForToken(botTokenData, ["chat"]);
 
     // Create Twitch API client
     const apiClient = new ApiClient({ authProvider });
