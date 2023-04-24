@@ -12,8 +12,5 @@ Chat bot for Mushu. Automated `!eng` command. If a chat message is not in Englis
 | `!botshu reset all`        | Reset strikes for all users.            |
 | `!botshu reset {username}` | Reset strikes for the given user.       |
 | `!botshu count {username}` | See the number of strikes of the user.  |
-| `!botshu golive`           | Set stream to live status.              |
-| `!botshu gooffline`        | Set stream to offline status.           |
-| `!botshu stream`           | Get the bot's stream status.            |
 | `!botshu setmessage {msg}` | Customize the offline message.          |
 | `!botshu version`          | Prints bot version in chat.             |
