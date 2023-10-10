@@ -69,7 +69,7 @@ async function startBotshu() {
 
     chatClient.connect();
 
-    // Start express for the bot website
+    // Start HTTP server, express app for the bot website and socket.io
     server.initializeBotServer(store);
 }
 
