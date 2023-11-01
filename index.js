@@ -22,6 +22,10 @@ const lang = require("./lib/language/language.js");
 const parametersClient = require("./lib/commands/common/handler-parameter.js");
 const messageHandlers = require("./lib/commands/message-handlers.js");
 
+// Place the partner plus state in the store
+const plusPoints =  require("./lib/partner-plus/points.js");
+store.setPlusPoints(plusPoints);
+
 async function startBotshu() {
     // Prepare Twurple authentication provider
     const clientId = process.env.TWITCH_CLIENT_ID;
@@ -57,6 +61,7 @@ async function startBotshu() {
         parametersClient.setParameters(
             chatClient,
             apiClient,
+            io,
             channel,
             user,
             text,
