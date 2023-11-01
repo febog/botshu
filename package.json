@@ -1,6 +1,6 @@
 {
   "name": "botshu",
-  "version": "9.0.0-alpha.1",
+  "version": "9.0.0-alpha.2",
   "description": "Twitch chat bot for Mushu",
   "main": "index.js",
   "scripts": {
