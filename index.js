@@ -6,10 +6,18 @@ const { RefreshingAuthProvider } = require("@twurple/auth");
 const { ChatClient } = require("@twurple/chat");
 const { ApiClient } = require("@twurple/api");
 const { EventSubWsListener } = require("@twurple/eventsub-ws");
+
+// Web Server dependencies for website and socket.io
+const express = require('express');
+const app = express();
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+const port = process.env.PORT || 3000;
+
 const storage = require("./lib/storage/storage.js");
 const stream = require("./lib/stream/stream.js");
 const store = require("./lib/global-bot-state.js");
-const server = require("./lib/server/server.js");
+const botServer = require("./lib/server/server.js");
 const lang = require("./lib/language/language.js");
 const parametersClient = require("./lib/commands/common/handler-parameter.js");
 const messageHandlers = require("./lib/commands/message-handlers.js");
@@ -62,15 +70,15 @@ async function startBotshu() {
         await lang.handleMessageLanguage(p);
     });
 
+    // Start HTTP server, express app for the bot website and socket.io
+    botServer.initializeBotServer(express, app, server, io, port, store);
+
     // // Setup WebSocket EventSub listener for listening to stream changes
     const listener = new EventSubWsListener({ apiClient });
     listener.start();
-    stream.setupStreamState(apiClient, chatClient, listener, store);
+    stream.setupStreamState(apiClient, chatClient, listener, io, store);
 
     chatClient.connect();
-
-    // Start HTTP server, express app for the bot website and socket.io
-    server.initializeBotServer(store);
 }
 
 startBotshu();
