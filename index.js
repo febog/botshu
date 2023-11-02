@@ -15,7 +15,7 @@ const io = require('socket.io')(server);
 const port = process.env.PORT || 3000;
 
 const storage = require("./lib/storage/storage.js");
-const stream = require("./lib/stream/stream.js");
+const stream = require("./lib/events/stream.js");
 const store = require("./lib/global-bot-state.js");
 const botServer = require("./lib/server/server.js");
 const lang = require("./lib/language/language.js");
