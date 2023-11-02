@@ -20,21 +20,16 @@
         .widget-text {
             font-size: 3em;
             line-height: 1.1;
-            font-weight: 400;
+            font-weight: 700;
             margin: 0;
             color: #e7e7e7;
-        }
-
-        .bold {
-            font-weight: 700;
         }
     </style>
 </head>
 
 <body>
-    <span class="widget-text">Sub split:
-        <span class="bold" id="points-counter">-/-</span> points. Today's Tier 3 goal:
-        <span class="bold" id="tier3-counter">-/-</span>
+    <span class="widget-text">
+        <span style="color:red;">!</span>PARTNERPLUS <span id="points-counter">-/350</span>
     </span>
 
     <!-- Include the Socket.io library -->
@@ -45,17 +40,11 @@
         const socket = io();
 
         const pointsCounter = document.getElementById('points-counter');
-        const tier3Counter = document.getElementById('tier3-counter');
 
         // Handle server messages
         socket.on('points-update', (msg) => {
             // Update the content on the page
             pointsCounter.textContent = msg;
-        });
-
-        socket.on('tier3-update', (msg) => {
-            // Update the content on the page
-            tier3Counter.textContent = msg;
         });
     </script>
 </body>
