@@ -22,12 +22,16 @@ const botServer = require("./lib/server/server.js");
 const lang = require("./lib/language/language.js");
 const parametersClient = require("./lib/commands/common/handler-parameter.js");
 const messageHandlers = require("./lib/commands/message-handlers.js");
+const extensionEmotes = require("./lib/services/extension-emotes.js");
 
 // Place the partner plus state in the store
 const plusPoints =  require("./lib/partner-plus/points.js");
 store.setPlusPoints(plusPoints);
 
 async function startBotshu() {
+    // Setup initial global state
+    await extensionEmotes.loadThirdPartyEmotes(store);
+
     // Prepare Twurple authentication provider
     const clientId = process.env.TWITCH_CLIENT_ID;
     const clientSecret = process.env.TWITCH_CLIENT_SECRET;
