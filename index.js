@@ -16,15 +16,10 @@ const port = process.env.PORT || 3000;
 
 const storage = require("./lib/storage.js");
 const stream = require("./lib/events/stream.js");
-const chatEvents = require("./lib/events/chat-events.js");
 const store = require("./lib/global-bot-state.js");
 const botServer = require("./lib/server/server.js");
 
 const BotShu = require('./lib/botshu.js');
-
-// Place the partner plus state in the store
-const plusPoints = require("./lib/partner-plus/points.js");
-store.setPlusPoints(plusPoints);
 
 async function startBotshu() {
     // Prepare Twurple authentication provider
@@ -56,9 +51,7 @@ async function startBotshu() {
 
     // Start main application logic
     const botShu = new BotShu(chatClient, apiClient, io, storage, store);
-    botShu.start();
-
-    chatEvents.handleChatEvents(chatClient, io, store);
+    await botShu.start();
 
     // Start HTTP server, express app for the bot website and socket.io
     botServer.initializeBotServer(express, app, server, io, port, store);
