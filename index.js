@@ -14,7 +14,7 @@ const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const port = process.env.PORT || 3000;
 
-const storage = require("./lib/storage/storage.js");
+const storage = require("./lib/storage.js");
 const stream = require("./lib/events/stream.js");
 const chatEvents = require("./lib/events/chat-events.js");
 const store = require("./lib/global-bot-state.js");
