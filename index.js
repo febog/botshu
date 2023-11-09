@@ -19,7 +19,6 @@ const stream = require("./lib/events/stream.js");
 const chatEvents = require("./lib/events/chat-events.js");
 const store = require("./lib/global-bot-state.js");
 const botServer = require("./lib/server/server.js");
-const extensionEmotes = require("./lib/services/extension-emotes.js");
 
 const BotShu = require('./lib/botshu.js');
 
@@ -28,9 +27,6 @@ const plusPoints = require("./lib/partner-plus/points.js");
 store.setPlusPoints(plusPoints);
 
 async function startBotshu() {
-    // Setup initial global state
-    await extensionEmotes.loadThirdPartyEmotes(store);
-
     // Prepare Twurple authentication provider
     const clientId = process.env.TWITCH_CLIENT_ID;
     const clientSecret = process.env.TWITCH_CLIENT_SECRET;
