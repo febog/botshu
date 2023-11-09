@@ -19,13 +19,12 @@ const stream = require("./lib/events/stream.js");
 const chatEvents = require("./lib/events/chat-events.js");
 const store = require("./lib/global-bot-state.js");
 const botServer = require("./lib/server/server.js");
-const lang = require("./lib/language/language.js");
-const parametersClient = require("./lib/commands/common/handler-parameter.js");
-const messageHandlers = require("./lib/commands/message-handlers.js");
 const extensionEmotes = require("./lib/services/extension-emotes.js");
 
+const BotShu = require('./lib/botshu.js');
+
 // Place the partner plus state in the store
-const plusPoints =  require("./lib/partner-plus/points.js");
+const plusPoints = require("./lib/partner-plus/points.js");
 store.setPlusPoints(plusPoints);
 
 async function startBotshu() {
@@ -59,26 +58,9 @@ async function startBotshu() {
     const channels = store.isProduction() ? ["mushu", "febog"] : ["febog"];
     const chatClient = new ChatClient({ authProvider, channels });
 
-    chatClient.onMessage(async (channel, user, text, msg) => {
-        // If the message comes from the bot itself, ignore.
-        if (user === "modshu") return;
-
-        parametersClient.setParameters(
-            chatClient,
-            apiClient,
-            io,
-            channel,
-            user,
-            text,
-            store,
-            msg
-        );
-        let p = parametersClient.getParameters();
-
-        messageHandlers.handleMessage(p);
-
-        await lang.handleMessageLanguage(p);
-    });
+    // Start main application logic
+    const botShu = new BotShu(chatClient, apiClient, io, storage, store);
+    botShu.start();
 
     chatEvents.handleChatEvents(chatClient, io, store);
 
