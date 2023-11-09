@@ -46,6 +46,29 @@
             // Update the content on the page
             pointsCounter.textContent = msg;
         });
+
+        // Load an initial count when website loads
+        document.addEventListener("DOMContentLoaded", function () {
+            // Fetch data when the document is fully loaded
+            fetchInitialCount();
+        });
+
+        function fetchInitialCount() {
+            fetch("/partner-plus-points")
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text(); // or response.json() if the data is JSON
+                })
+                .then(data => {
+                    // Update the span element with the fetched data
+                    pointsCounter.textContent = data;
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                });
+        }
     </script>
 </body>
 
