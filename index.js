@@ -58,7 +58,7 @@ async function startBotshu() {
     await botShu.start();
 
     // Start HTTP server, express app for the bot website and socket.io
-    botServer.initializeBotServer(express, app, server, io, port, store);
+    botServer.initializeBotServer(express, app, server, io, port, botShu);
 }
 
 startBotshu();
