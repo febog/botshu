@@ -6,7 +6,7 @@ name: Build and deploy BotShu to production
 on:
   push:
     branches:
-      - main
+      - main-disable
   workflow_dispatch:
 
 jobs:
