@@ -15,7 +15,6 @@ const io = require('socket.io')(server);
 const port = process.env.PORT || 3000;
 
 const storage = require("./lib/storage.js");
-const stream = require("./lib/events/stream.js");
 const store = require("./lib/global-bot-state.js");
 const botServer = require("./lib/server/server.js");
 
@@ -48,20 +47,18 @@ async function startBotshu() {
     // Connect to chat
     const channels = store.isProduction() ? ["mushu", "febog"] : ["febog"];
     const chatClient = new ChatClient({ authProvider, channels });
+    chatClient.connect();
+
+    // Setup WebSocket EventSub listener for listening to stream changes
+    const listener = new EventSubWsListener({ apiClient });
+    listener.start();
 
     // Start main application logic
-    const botShu = new BotShu(chatClient, apiClient, io, storage, store);
+    const botShu = new BotShu(chatClient, apiClient, io, listener, storage, store);
     await botShu.start();
 
     // Start HTTP server, express app for the bot website and socket.io
-    botServer.initializeBotServer(express, app, server, io, port, store);
-
-    // // Setup WebSocket EventSub listener for listening to stream changes
-    const listener = new EventSubWsListener({ apiClient });
-    listener.start();
-    stream.setupStreamState(apiClient, chatClient, listener, store);
-
-    chatClient.connect();
+    botServer.initializeBotServer(express, app, server, io, port, botShu);
 }
 
 startBotshu();
