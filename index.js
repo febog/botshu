@@ -3,6 +3,8 @@
 // 2021-2023
 const { loadEnvFile } = require("node:process");
 loadEnvFile();
+console.log("Port env: ");
+console.log(process.env.PORT);
 const { RefreshingAuthProvider } = require("@twurple/auth");
 const { ChatClient } = require("@twurple/chat");
 const { ApiClient } = require("@twurple/api");
@@ -14,6 +16,8 @@ const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const port = process.env.PORT || 3000;
+console.log("Port: ");
+console.log(port);
 
 const storage = require("./lib/storage.js");
 const store = require("./lib/global-bot-state.js");
