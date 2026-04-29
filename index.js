@@ -1,7 +1,8 @@
 // BotShu
 // Felipe Bojorquez
 // 2021-2023
-require("dotenv").config();
+const { loadEnvFile } = require("node:process");
+loadEnvFile();
 const { RefreshingAuthProvider } = require("@twurple/auth");
 const { ChatClient } = require("@twurple/chat");
 const { ApiClient } = require("@twurple/api");
