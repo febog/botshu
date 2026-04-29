@@ -1,8 +1,7 @@
 // BotShu
 // Felipe Bojorquez
 // 2021-2023
-const { loadEnvFile } = require("node:process");
-loadEnvFile();
+require("dotenv").config();
 console.log("Port env: ");
 console.log(process.env.PORT);
 const { RefreshingAuthProvider } = require("@twurple/auth");
