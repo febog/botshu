@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Partner Plus goal widget</title>
+    <style>
+        :root {
+            --body-font-family: system-ui, -apple-system, "Segoe UI", Roboto,
+                "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif,
+                "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+                "Noto Color Emoji";
+        }
+
+        body {
+            font-family: var(--body-font-family);
+        }
+
+        .widget-text {
+            font-size: 3em;
+            line-height: 1.1;
+            font-weight: 700;
+            margin: 0;
+            color: #e7e7e7;
+        }
+    </style>
+</head>
+
+<body>
+    <span class="widget-text">
+        <span style="color:red;">!</span>PARTNERPLUS <span id="points-counter">-/350</span>
+    </span>
+
+    <!-- Include the Socket.io library -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+
+    <script>
+        // Connect to the WebSocket server
+        const socket = io();
+
+        const pointsCounter = document.getElementById('points-counter');
+
+        // Handle server messages
+        socket.on('points-update', (msg) => {
+            // Update the content on the page
+            pointsCounter.textContent = msg;
+        });
+
+        // Load an initial count when website loads
+        document.addEventListener("DOMContentLoaded", function () {
+            // Fetch data when the document is fully loaded
+            fetchInitialCount();
+        });
+
+        function fetchInitialCount() {
+            fetch("/partner-plus-points")
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text(); // or response.json() if the data is JSON
+                })
+                .then(data => {
+                    // Update the span element with the fetched data
+                    pointsCounter.textContent = data;
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                });
+        }
+    </script>
+</body>
+
+</html>

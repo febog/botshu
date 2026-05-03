@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  h1 BotShu
+  p
+    em
+      | Stream tooling for Mushu.
+  p
+    a(href='/') Home
+  p
+    | You can find the current song queue in 
+    a(href='/queue') queue
+    | .
+  p Stream is currently 
+    b #{isStreamLive ? "Live" : "Offline"}
+    | .
+  p
+    | Running #{title}
