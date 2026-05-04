@@ -58,3 +58,5 @@ class StorageService {
     });
   }
 }
+
+export const createStorageService = ({ blobServiceClient, containerName }) => new StorageService({ blobServiceClient, containerName });
