@@ -12,4 +12,4 @@ class BlobService {
   }
 }
 
-export const createBlobService = ({ connectionString }) => new StorageService({ connectionString });
+export const createBlobService = ({ connectionString }) => new BlobService({ connectionString });
