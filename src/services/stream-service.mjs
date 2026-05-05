@@ -15,11 +15,14 @@ class StreamService {
     this.#listenerService = listenerService;
     this.#userId = userId;
     this.#subscribeToStreamChanges();
-    this.#isStreamLive = await this.#getStreamStatus();
   }
 
   isLive() {
     return this.#isStreamLive;
+  }
+
+  async initialize() {
+    this.#isStreamLive = await this.#getStreamStatus();
   }
 
   /**
@@ -53,4 +56,8 @@ class StreamService {
   }
 }
 
-export const createStreamService = ({ twitchApiClient, chatClient, listenerService, userId }) => new StreamService({ twitchApiClient, chatClient, listenerService, userId });
+export const createStreamService = async ({ twitchApiClient, chatClient, listenerService, userId }) => {
+  const streamService = new StreamService({ twitchApiClient, chatClient, listenerService, userId });
+  await streamService.initialize();
+  return streamService;
+};
