@@ -13,27 +13,28 @@ const BTTV_GLOBAL_EMOTES_URL = "https://api.betterttv.net/3/cached/emotes/global
 const SEVENTV_CHANNEL_EMOTES_URL_BASE = "https://7tv.io/v3/users/twitch/";
 
 class EmotesService {
+  #channelId;
   #emoteList = [];
 
   constructor({ channelId }) {
-    this.#loadEmoteList({ channelId })
+    this.#channelId = channelId;
   }
 
   getEmotes() {
     return this.#emoteList;
   }
 
-  #loadEmoteList({ channelId }) {
+  async loadEmoteList() {
     const emotes = [];
 
     // Get FFZ channel emotes
-    const ffzResponse = await fetch(`${FFZ_CHANNEL_EMOTES_URL_BASE}${channelId}`);
+    const ffzResponse = await fetch(`${FFZ_CHANNEL_EMOTES_URL_BASE}${this.#channelId}`);
     const ffzData = await ffzResponse.json();
     const FFZ_SET_ID = ffzData.room.set;
     ffzData.sets[FFZ_SET_ID].emoticons.map((e) => emotes.push(e.name));
 
     // Get BTTV channel and shared emotes, undocumented API.
-    const bttvChannelResponse = await fetch(`${BTTV_CHANNEL_EMOTES_URL_BASE}${channelId}`);
+    const bttvChannelResponse = await fetch(`${BTTV_CHANNEL_EMOTES_URL_BASE}${this.#channelId}`);
     const bttvChannelData = await bttvChannelResponse.json();
     bttvChannelData.channelEmotes.map((e) => emotes.push(e.code));
     bttvChannelData.sharedEmotes.map((e) => emotes.push(e.code));
@@ -44,7 +45,7 @@ class EmotesService {
     bttvGlobalData.map((e) => emotes.push(e.code));
 
     // Get 7TV channel emotes
-    const seventvResponse = await fetch(`${SEVENTV_CHANNEL_EMOTES_URL_BASE}${channelId}`);
+    const seventvResponse = await fetch(`${SEVENTV_CHANNEL_EMOTES_URL_BASE}${this.#channelId}`);
     const seventvData = await seventvResponse.json();
     seventvData.emote_set.emotes.map((e) => emotes.push(e.name));
 
@@ -53,4 +54,8 @@ class EmotesService {
   }
 }
 
-export const createEmotesService = ({ channelId }) => new EmotesService({ channelId });
+export const createEmotesService = async ({ channelId }) => {
+  const emoteService = new EmotesService({ channelId });
+  await emoteService.loadEmoteList();
+  return emoteService;
+};
