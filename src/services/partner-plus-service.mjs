@@ -13,7 +13,7 @@ const TIER_3_VALUE = 6;
 /**
  * Manages the state of the Parter Plus Widget logic.
  */
-class PartnerPlus {
+class PartnerPlusService {
   #chatClient;
   #socketClient;
   #storageService;
@@ -24,7 +24,6 @@ class PartnerPlus {
     this.#socketClient = socketClient; // Calls emit()
     this.#storageService = storageService; // Calls readJsonFromBlobStorage(), storeJsonToBlobStorage()
     this.#countDataBlob = `points.${userId}.json`;
-    this.#initialize();
   }
 
   #points = 0;
@@ -39,7 +38,7 @@ class PartnerPlus {
     return this.#points;
   }
 
-  async #initialize() {
+  async initialize() {
     // Load state from storage
     this.currentPlusPoints = await this.#loadCount();
 
@@ -145,3 +144,9 @@ class PartnerPlus {
     return tier;
   }
 }
+
+export const createPartnerPlusService = async ({ chatClient, socketClient, storageService, userId }) => {
+  const partnerPlusService = new PartnerPlusService({ chatClient, socketClient, storageService, userId });
+  await partnerPlusService.initialize();
+  return partnerPlusService;
+};
