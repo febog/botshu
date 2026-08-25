@@ -3,8 +3,8 @@
 // Provides the data for a string that looks like:
 //     Sub split: 270/350 points.
 
-// Partner plus points needed for eligibilty into the program
-const PARTNER_PLUS_THRESHOLD = 350;
+// Default Partner Plus points needed for eligibilty into the program
+const PARTNER_PLUS_THRESHOLD = 300;
 // Partner plus points value for each subscription tier
 const TIER_1_VALUE = 1;
 const TIER_2_VALUE = 2;
@@ -27,6 +27,7 @@ class PartnerPlusService {
   }
 
   #points = 0;
+  #goal = PARTNER_PLUS_THRESHOLD;
 
   set currentPlusPoints(points) {
     this.#points = points;
@@ -36,6 +37,15 @@ class PartnerPlusService {
 
   get currentPlusPoints() {
     return this.#points;
+  }
+
+  set partnerPlusGoal(points) {
+    this.#goal = points;
+    this.updateWidget();
+  }
+
+  get partnerPlusGoal() {
+    return this.#goal;
   }
 
   async initialize() {
@@ -95,13 +105,17 @@ class PartnerPlusService {
     this.currentPlusPoints = points;
   }
 
+  setGoalPoints(points) {
+    this.partnerPlusGoal = points;
+  }
+
   /**
    * Used by the endpoint for getting points on page load and for updating the
    * widget.
    * @returns String in the 0/350 format
    */
   getCounter() {
-    return `${this.currentPlusPoints}/${PARTNER_PLUS_THRESHOLD}`;
+    return `${this.currentPlusPoints}/${this.partnerPlusGoal}`;
   }
 
   updateWidget() {
